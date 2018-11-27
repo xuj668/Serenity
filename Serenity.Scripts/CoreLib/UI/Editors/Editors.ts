@@ -344,8 +344,8 @@
             super(input, opt);
 
             input.addClass('decimalQ');
-            var numericOptions = $.extend(Serenity.DecimalEditor.defaultAutoNumericOptions(), {
-                vMin: Q.coalesce(this.options.minValue, '0.00'),
+			var numericOptions = $.extend(Serenity.DecimalEditor.defaultAutoNumericOptions(), {
+				vMin: Q.coalesce(this.options.minValue, this.options.allowNegatives ? (this.options.maxValue != null ? ("-" + this.options.maxValue) : '-999999999999.99') : '0.00'),
                 vMax: Q.coalesce(this.options.maxValue, '999999999999.99')
             });
 
@@ -402,7 +402,8 @@
 
     export interface IntegerEditorOptions {
         minValue?: number;
-        maxValue?: number;
+		maxValue?: number;
+		allowNegatives?: boolean;
     }
 
     @Editor('Integer', [IDoubleValue])
@@ -415,7 +416,7 @@
             input.addClass('integerQ');
             var numericOptions = $.extend(Serenity.DecimalEditor.defaultAutoNumericOptions(),
                 {
-                    vMin: Q.coalesce(this.options.minValue, 0),
+					vMin: Q.coalesce(this.options.minValue, this.options.allowNegatives ? (this.options.maxValue != null ? ("-" + this.options.maxValue) : '-2147483647') : '0'),
                     vMax: Q.coalesce(this.options.maxValue, 2147483647),
                     aSep: null
                 });
@@ -460,7 +461,8 @@
         minValue?: string;
         maxValue?: string;
         decimals?: any;
-        padDecimals?: any;
+		padDecimals?: any;
+		allowNegatives?: boolean;
     }
 
     export interface EmailEditorOptions {
@@ -1256,6 +1258,7 @@
         protected updateInterface(): void {
             var addButton = this.toolbar.findButton('add-file-button');
             addButton.toggleClass('disabled', this.get_readOnly());
+            this.fileSymbols.find('a.delete').toggle(!this.get_readOnly());
         }
 
         get_readOnly(): boolean {
@@ -1607,7 +1610,7 @@
         intervalMinutes?: any;
     }
 
-    @Editor('Time', [IDoubleValue])
+    @Editor('Time', [IDoubleValue, IReadOnly])
     @Element("<select />")
     export class TimeEditor extends Widget<TimeEditorOptions> {
 
@@ -1627,6 +1630,7 @@
             }
 
             this.minutes = $('<select/>').addClass('editor s-TimeEditor minute').insertAfter(input);
+            this.minutes.change(() => this.element.trigger("change"));
 
             for (var m = 0; m <= 59; m += (this.options.intervalMinutes || 5)) {
                 Q.addOption(this.minutes, m.toString(), ((m < 10) ? ('0' + m) : m.toString()));
@@ -1665,6 +1669,23 @@
 
         protected set_value(value: number): void {
             this.value = value;
+        }
+
+        get_readOnly(): boolean {
+            return this.element.hasClass('readonly');
+        }
+
+        set_readOnly(value: boolean): void {
+
+            if (value !== this.get_readOnly()) {
+                if (value) {
+                    this.element.addClass('readonly').attr('readonly', 'readonly');
+                }
+                else {
+                    this.element.removeClass('readonly').removeAttr('readonly');
+                }
+                Serenity.EditorUtils.setReadonly(this.minutes, value);
+            }
         }
     }
 

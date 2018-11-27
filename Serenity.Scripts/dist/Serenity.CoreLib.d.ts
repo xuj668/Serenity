@@ -552,6 +552,7 @@ declare namespace Q {
     function prefixedText(prefix: string): (text: string, key: string | ((p?: string) => string)) => string;
     function tryGetText(key: string): string;
     function dbTryText(prefix: string): ((key: string) => string);
+    function proxyTexts(o: Object, p: string, t: Object): Object;
     class LT {
         private key;
         static $table: {
@@ -1278,6 +1279,7 @@ declare namespace Serenity {
         displayFormat?: string;
         alignment?: string;
         width?: number;
+        widthSet?: boolean;
         minWidth?: number;
         maxWidth?: number;
         labelWidth?: string;
@@ -1539,6 +1541,7 @@ declare namespace Serenity {
     interface IntegerEditorOptions {
         minValue?: number;
         maxValue?: number;
+        allowNegatives?: boolean;
     }
     class IntegerEditor extends Widget<IntegerEditorOptions> implements IDoubleValue {
         constructor(input: JQuery, opt?: IntegerEditorOptions);
@@ -1552,6 +1555,7 @@ declare namespace Serenity {
         maxValue?: string;
         decimals?: any;
         padDecimals?: any;
+        allowNegatives?: boolean;
     }
     interface EmailEditorOptions {
         domain?: string;
@@ -1736,6 +1740,8 @@ declare namespace Serenity {
         value: number;
         protected get_value(): number;
         protected set_value(value: number): void;
+        get_readOnly(): boolean;
+        set_readOnly(value: boolean): void;
     }
     class URLEditor extends StringEditor {
         constructor(input: JQuery);
@@ -2570,6 +2576,7 @@ declare namespace Serenity {
         protected getPersistanceKey(): string;
         protected gridPersistanceFlags(): GridPersistanceFlags;
         protected canShowColumn(column: Slick.Column): boolean;
+        protected getPersistedSettings(): PersistedGridSettings;
         protected restoreSettings(settings?: PersistedGridSettings, flags?: GridPersistanceFlags): void;
         protected persistSettings(flags?: GridPersistanceFlags): void;
         protected getCurrentSettings(flags?: GridPersistanceFlags): PersistedGridSettings;
@@ -2618,7 +2625,7 @@ declare namespace Serenity {
     }
 }
 declare namespace Serenity {
-    class CheckTreeEditor<TItem extends CheckTreeItem<any>, TOptions> extends DataGrid<TItem, TOptions> implements IGetEditValue, ISetEditValue {
+    class CheckTreeEditor<TItem extends CheckTreeItem<any>, TOptions> extends DataGrid<TItem, TOptions> implements IGetEditValue, ISetEditValue, IReadOnly {
         private byId;
         constructor(div: JQuery, opt?: TOptions);
         protected getIdProperty(): string;
@@ -2648,6 +2655,9 @@ declare namespace Serenity {
         protected getSlickOptions(): Slick.GridOptions;
         protected sortItems(): void;
         protected moveSelectedUp(): boolean;
+        private _readOnly;
+        get_readOnly(): boolean;
+        set_readOnly(value: boolean): void;
         private get_value();
         value: string[];
         private set_value(value);

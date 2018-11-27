@@ -1,3 +1,55 @@
+## 3.8.1 (2018-11-03)
+
+Bugfixes:
+  - resolve package downgrade issue with System.Data.SqlClient
+
+## 3.8.0 (2018-11-03)
+
+Features:
+  - updated to .net core 2.1, updated many packages
+  - when a field can't be loaded from database using getFromReader, show the name of the field and row type so that developer can understand which field has an invalid type
+  - added local text generation ability (optional) to server typings so that local texts can be accessed with completion and compile time checking. currently only processes row field texts and nested local texts.
+  - serenity guide is now hosted at https://serenity.is/docs
+  - added readonly option to CheckTreeEditor and subclasses like CheckLookupEditor
+  - improve UniversalAssemblyResolver so that more packages can be located / loaded by sergen
+  - divide InBrace function of CodeWriter to StartBrace and EndBrace functions so blocks can be manually opened and closed
+  
+Bugfixes:
+  - if allowNegatives is true and minValue / maxValue is not specified, minValue is set to 999999999999.99 instead of -999999999999.99 in decimal editor
+  - only switch to main tab if current tab is being made disabled
+  - add / to handler paths to make them only available at root, see https://github.com/volkanceylan/Serenity/issues/4017
+  
+## 3.7.7 (2018-09-15)
+
+Features:
+  - enabled StackExchange.Exceptional (e.g. exception logging) in ASP.NET Core version [StartSharp]
+  - added docs for migrating Serene project to StartSharp inplace / to a new project [StartSharp]
+  - added sample daily background task that generates PDF from a report and sends it by e-mail [StartSharp]
+  - better handling when header filters mixin is working client side with formatted column text instead of underlying value [StartSharp]
+  - add cke_dialog class to allow header filter search input work under dialogs [StartSharp]
+  - use timeout give cascaded dropdowns a chance to update / clear themselves, also fixes quick filter clear problem
+  - updated Scriban to 1.2.3
+  - implemented IReadOnly in RadioButtonEditor (thanks @dfaruque)
+  - made ApplyDefaultValues return row for chaining, added unassignedOnly option to the method
+  - modified css classes used for OneThirdWidthAttribute, QuarterWidthAttribute, ThreeQuarterWidthAttribute and TwoThirdWidthAttribute so that they stay around 250-350 pixels in worst case. might be a breaking change for your existing layouts.
+  - added JustThis option to form layout attributes like HalfWidth etc, so that you won't have to cancel form widths to just set width for one item
+  - added JustThis option to LabelWidthAttribute just like FormWidthAttribute
+  - added VariantField which should correspond to sql_variant (sergen doesn't auto use it yet)
+  - stop auto numeric from raising errors when an out of range value set manually, only fix value on tab out if some action performed to change value
+  - added AllowNegatives property to IntegerEditor and DecimalEditor, which alongside AllowNegativesByDefault static property controls ability to edit negative values in editors when MinValue is not explicitly set
+  - added widthset to PropertyItem which determines if an explicit width value is assigned to property in columns.cs etc.
+  - split part that loads persisted settings when settings = null in DataGrid.restoreSettings into its own function, getPersistedSettings
+
+Bugfixes:
+  - if there was an exception, shouldn't commit transaction but dispose (rollback) it in .net core service endpoints
+  - resolve issue that fields with a space inside name can't be removed from grouping [StartSharp]
+  - check value of [ReadOnly(false)] attribute before setting item as read only
+  - ResetLabelWidth attribute shouldn't require a value
+  - gray out now button in DateTimeEditor when readonly
+  - handle issue with extra whitespaces in generated Row.cs after scriban update
+  - fix typo for tabbingDirections in slick.grid.js (thanks @globtech1)
+  - delete .orig file in DeleteFileAndRelated as well (thanks @globtech1)
+  
 ## 3.7.6 (2018-07-10)
 
 Features:
